@@ -1,0 +1,444 @@
+/* ═══════════════════════════════════════════════
+   Weather Forecast Extension — content.css
+   All selectors prefixed with #wmf- to avoid
+   collisions with Google Maps page styles.
+   ═══════════════════════════════════════════════ */
+
+/* ── Theme tokens ──
+   Dark is the default; the light overrides below kick in
+   automatically when the browser/OS is in light mode. Chart
+   tick/grid/tooltip colors live in content.js (Chart.js can't
+   read CSS vars) and are themed there in parallel. */
+:root {
+  --wmf-bg: rgba(13, 15, 20, 0.97);
+  --wmf-bg-solid: #0d0f14;
+  --wmf-border: rgba(99, 179, 237, 0.22);
+  --wmf-text: #e2e8f0;
+  --wmf-text-dim: #94a3b8;
+  --wmf-text-muted: #64748b;
+  --wmf-text-faint: #475569;
+  --wmf-divider: rgba(255, 255, 255, 0.06);
+  --wmf-divider-soft: rgba(255, 255, 255, 0.05);
+  --wmf-surface: rgba(255, 255, 255, 0.02);
+  --wmf-surface-border: rgba(255, 255, 255, 0.04);
+  --wmf-header-grad: linear-gradient(135deg, rgba(99,179,237,0.08), rgba(72,187,120,0.03));
+  --wmf-fab-grad: linear-gradient(135deg, rgba(20,24,32,0.98), rgba(13,15,20,0.98));
+  --wmf-btn-bg: rgba(255, 255, 255, 0.06);
+  --wmf-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,179,237,0.07), inset 0 1px 0 rgba(255,255,255,0.05);
+  --wmf-fab-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(99,179,237,0.08), inset 0 1px 0 rgba(255,255,255,0.06);
+  --wmf-scroll-thumb: rgba(99, 179, 237, 0.18);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --wmf-bg: rgba(255, 255, 255, 0.97);
+    --wmf-bg-solid: #ffffff;
+    --wmf-border: rgba(37, 99, 235, 0.28);
+    --wmf-text: #1e293b;
+    --wmf-text-dim: #475569;
+    --wmf-text-muted: #64748b;
+    --wmf-text-faint: #94a3b8;
+    --wmf-divider: rgba(0, 0, 0, 0.08);
+    --wmf-divider-soft: rgba(0, 0, 0, 0.06);
+    --wmf-surface: rgba(15, 23, 42, 0.04);
+    --wmf-surface-border: rgba(15, 23, 42, 0.08);
+    --wmf-header-grad: linear-gradient(135deg, rgba(99,179,237,0.16), rgba(72,187,120,0.07));
+    --wmf-fab-grad: linear-gradient(135deg, #ffffff, #f1f5f9);
+    --wmf-btn-bg: rgba(15, 23, 42, 0.06);
+    --wmf-shadow: 0 24px 64px rgba(15,23,42,0.22), 0 0 0 1px rgba(37,99,235,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+    --wmf-fab-shadow: 0 16px 40px rgba(15,23,42,0.2), 0 0 0 1px rgba(37,99,235,0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+    --wmf-scroll-thumb: rgba(37, 99, 235, 0.28);
+  }
+}
+
+#wmf-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 420px;
+  max-height: 82vh;
+  background: var(--wmf-bg);
+  border: 1px solid var(--wmf-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--wmf-shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.32s ease;
+  z-index: 9999999;
+  font-family: 'Google Sans', 'Segoe UI', system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+#wmf-panel * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#wmf-panel.wmf-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Collapsed round icon (FAB) ── */
+#wmf-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid var(--wmf-border);
+  background: var(--wmf-fab-grad);
+  box-shadow: var(--wmf-fab-shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: var(--wmf-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 9999999;
+  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease, box-shadow 0.2s ease;
+  font-family: 'Google Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+#wmf-fab:hover {
+  transform: scale(1.08);
+  box-shadow: var(--wmf-fab-shadow);
+  border-color: rgba(99, 179, 237, 0.5);
+}
+
+#wmf-fab:active { transform: scale(0.96); }
+
+.wmf-fab-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 50%;
+  pointer-events: none;
+  display: block;
+}
+
+/* "Forecast ready" dot — shown when the panel is collapsed but data exists */
+.wmf-fab-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #48bb78;
+  border: 2px solid var(--wmf-bg-solid);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+#wmf-fab.wmf-fab-ready .wmf-fab-dot {
+  opacity: 1;
+  transform: scale(1);
+  animation: wmf-pulse 2s infinite;
+}
+
+/* Hidden while the panel is expanded */
+#wmf-fab.wmf-fab-hidden {
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+
+/* ── Header ── */
+#wmf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--wmf-divider);
+  background: var(--wmf-header-grad);
+}
+
+#wmf-loc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+#wmf-loc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wmf-text);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+#wmf-loc-coords {
+  font-size: 11px;
+  color: var(--wmf-text-dim);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+#wmf-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.wmf-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  background: rgba(99,179,237,0.1);
+  border: 1px solid rgba(99,179,237,0.2);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #63b3ed;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wmf-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #48bb78;
+  animation: wmf-pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes wmf-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.75); }
+}
+
+#wmf-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--wmf-btn-bg);
+  color: var(--wmf-text-dim);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+#wmf-close:hover { background: rgba(239,68,68,0.15); color: #fc8181; }
+
+/* ── Toggle bar ── */
+#wmf-toggle-bar {
+  display: flex;
+  gap: 5px;
+  padding: 9px 14px 7px;
+  border-bottom: 1px solid var(--wmf-divider-soft);
+  flex-wrap: wrap;
+}
+
+.wmf-tog {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+  white-space: nowrap;
+  background: none;
+  font-family: inherit;
+}
+.wmf-tog.wmf-off {
+  color: var(--wmf-text-faint);
+  border-color: var(--wmf-divider);
+}
+.wmf-tog.wmf-on-temp  { color: #fc8181; background: rgba(252,129,129,0.1); border-color: rgba(252,129,129,0.3); }
+.wmf-tog.wmf-on-rain  { color: #63b3ed; background: rgba(99,179,237,0.1);  border-color: rgba(99,179,237,0.3); }
+.wmf-tog.wmf-on-cloud { color: #a78bfa; background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.3); }
+.wmf-tog.wmf-on-wind  { color: #48bb78; background: rgba(72,187,120,0.1);  border-color: rgba(72,187,120,0.3); }
+
+.wmf-tog-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ── Day tabs ── */
+#wmf-day-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 14px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#wmf-day-tabs::-webkit-scrollbar { display: none; }
+
+.wmf-day-tab {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--wmf-text-muted);
+  background: transparent;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+.wmf-day-tab:hover { color: var(--wmf-text-dim); border-color: var(--wmf-divider); }
+.wmf-day-tab.wmf-active { color: #63b3ed; background: rgba(99,179,237,0.1); border-color: rgba(99,179,237,0.25); }
+
+/* ── Range label ── */
+#wmf-range-label {
+  font-size: 10px;
+  color: var(--wmf-text-faint);
+  padding: 5px 14px 0;
+  letter-spacing: 0.03em;
+}
+
+/* ── Charts ── */
+#wmf-charts {
+  padding: 12px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  max-height: calc(82vh - 120px);
+}
+#wmf-charts::-webkit-scrollbar { width: 4px; }
+#wmf-charts::-webkit-scrollbar-track { background: transparent; }
+#wmf-charts::-webkit-scrollbar-thumb { background: var(--wmf-scroll-thumb); border-radius: 2px; }
+
+.wmf-chart-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.wmf-chart-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.wmf-chart-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--wmf-divider);
+}
+
+.wmf-ct-temp  { color: #fc8181; }
+.wmf-ct-rain  { color: #63b3ed; }
+.wmf-ct-cloud { color: #a78bfa; }
+.wmf-ct-wind  { color: #48bb78; }
+
+.wmf-chart-wrap {
+  position: relative;
+  height: 130px;
+  background: var(--wmf-surface);
+  border-radius: 10px;
+  padding: 8px;
+  border: 1px solid var(--wmf-surface-border);
+}
+
+/* ── Loading / Error ── */
+.wmf-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 20px;
+  gap: 13px;
+}
+
+.wmf-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(99,179,237,0.15);
+  border-top-color: #63b3ed;
+  border-radius: 50%;
+  animation: wmf-spin 0.8s linear infinite;
+}
+@keyframes wmf-spin { to { transform: rotate(360deg); } }
+
+.wmf-loading-text {
+  font-size: 12px;
+  color: var(--wmf-text-muted);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0 10px;
+  line-height: 1.6;
+}
+
+/* ── Hint tooltip ── */
+#wmf-hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--wmf-bg);
+  border: 1px solid var(--wmf-border);
+  border-radius: 24px;
+  padding: 9px 18px;
+  color: var(--wmf-text-dim);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 9999998;
+  white-space: nowrap;
+  font-family: 'Google Sans', 'Segoe UI', system-ui, sans-serif;
+}
+#wmf-hint.wmf-hidden { opacity: 0; pointer-events: none; }
+
+/* ── Click ripple feedback ── */
+.wmf-ripple {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: rgba(99, 179, 237, 0.5);
+  border: 2px solid #63b3ed;
+  pointer-events: none;
+  z-index: 9999999;
+  animation: wmf-ripple-anim 0.7s ease-out forwards;
+}
+@keyframes wmf-ripple-anim {
+  0%   { transform: scale(0.4); opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
