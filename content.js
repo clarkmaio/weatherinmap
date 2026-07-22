@@ -20,10 +20,10 @@
   const activeCharts = {};
 
   const LAYERS = [
-    { id: 'temp',  label: 'Temperature', cls: 'wmf-on-temp',  defaultOn: true  },
-    { id: 'rain',  label: 'Precip.',     cls: 'wmf-on-rain',  defaultOn: true  },
-    { id: 'cloud', label: 'Cloud Cover', cls: 'wmf-on-cloud', defaultOn: false },
-    { id: 'wind',  label: 'Wind',        cls: 'wmf-on-wind',  defaultOn: false },
+    { id: 'temp',  label: 'Temperature', icon: '🌡', cls: 'wmf-on-temp',  defaultOn: true  },
+    { id: 'rain',  label: 'Precip.',     icon: '🌧', cls: 'wmf-on-rain',  defaultOn: true  },
+    { id: 'cloud', label: 'Cloud Cover', icon: '☁️', cls: 'wmf-on-cloud', defaultOn: false },
+    { id: 'wind',  label: 'Wind',        icon: '💨', cls: 'wmf-on-wind',  defaultOn: false },
   ];
   let toggleState = Object.fromEntries(LAYERS.map(l => [l.id, l.defaultOn]));
 
@@ -350,8 +350,8 @@
     if (!bar) return;
     bar.innerHTML = LAYERS.map(l => {
       const cls = toggleState[l.id] ? l.cls : 'wmf-off';
-      return `<button class="wmf-tog ${cls}" data-layer="${l.id}">
-        <span class="wmf-tog-dot"></span>${l.label}
+      return `<button class="wmf-tog ${cls}" data-layer="${l.id}" title="${l.label}" aria-label="${l.label}">
+        <span class="wmf-tog-icon">${l.icon}</span>
       </button>`;
     }).join('');
     bar.querySelectorAll('.wmf-tog').forEach(btn => {

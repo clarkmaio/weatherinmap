@@ -199,8 +199,8 @@
 .wmf-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 9px;
+  gap: 7px;
+  padding: 6px 13px;
   background: rgba(99,179,237,0.1);
   border: 1px solid rgba(99,179,237,0.2);
   border-radius: 20px;
@@ -248,8 +248,8 @@
 /* ── Toggle bar ── */
 #wmf-toggle-bar {
   display: flex;
-  gap: 5px;
-  padding: 9px 14px 7px;
+  gap: 9px;
+  padding: 12px 14px 10px;
   border-bottom: 1px solid var(--wmf-divider-soft);
   flex-wrap: wrap;
 }
@@ -257,35 +257,47 @@
 .wmf-tog {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  justify-content: center;
+  padding: 16px 22px;
+  border-radius: 16px;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   transition: all 0.15s;
   user-select: none;
   white-space: nowrap;
   background: none;
   font-family: inherit;
+  overflow: hidden;
 }
+/* Unselected: flat, dim, recedes into the background */
 .wmf-tog.wmf-off {
   color: var(--wmf-text-faint);
+  background: var(--wmf-btn-bg);
   border-color: var(--wmf-divider);
+  box-shadow: none;
 }
-.wmf-tog.wmf-on-temp  { color: #fc8181; background: rgba(252,129,129,0.1); border-color: rgba(252,129,129,0.3); }
-.wmf-tog.wmf-on-rain  { color: #63b3ed; background: rgba(99,179,237,0.1);  border-color: rgba(99,179,237,0.3); }
-.wmf-tog.wmf-on-cloud { color: #a78bfa; background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.3); }
-.wmf-tog.wmf-on-wind  { color: #48bb78; background: rgba(72,187,120,0.1);  border-color: rgba(72,187,120,0.3); }
+.wmf-tog.wmf-off:hover {
+  border-color: var(--wmf-text-faint);
+}
+/* Selected: strong fill + bright border + colored glow ring */
+.wmf-tog.wmf-on-temp  { color: #fc8181; background: rgba(252,129,129,0.30); border-color: rgba(252,129,129,0.95); box-shadow: 0 0 0 3px rgba(252,129,129,0.18), 0 4px 12px rgba(252,129,129,0.25); }
+.wmf-tog.wmf-on-rain  { color: #63b3ed; background: rgba(99,179,237,0.30);  border-color: rgba(99,179,237,0.95);  box-shadow: 0 0 0 3px rgba(99,179,237,0.18),  0 4px 12px rgba(99,179,237,0.25); }
+.wmf-tog.wmf-on-cloud { color: #a78bfa; background: rgba(167,139,250,0.30); border-color: rgba(167,139,250,0.95); box-shadow: 0 0 0 3px rgba(167,139,250,0.18), 0 4px 12px rgba(167,139,250,0.25); }
+.wmf-tog.wmf-on-wind  { color: #48bb78; background: rgba(72,187,120,0.30);  border-color: rgba(72,187,120,0.95);  box-shadow: 0 0 0 3px rgba(72,187,120,0.18),  0 4px 12px rgba(72,187,120,0.25); }
 
-.wmf-tog-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
+.wmf-tog-icon {
+  display: block;
+  font-size: 22px;
+  line-height: 1;
+  width: 22px;
+  height: 22px;
+  text-align: center;
+  filter: grayscale(1) opacity(0.45);
+  transition: filter 0.15s;
+}
+/* Full-color icon when its layer is active */
+.wmf-tog:not(.wmf-off) .wmf-tog-icon {
+  filter: none;
 }
 
 /* ── Day tabs ── */

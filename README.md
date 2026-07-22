@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Weather Forecast for Google Maps logo" width="160" height="160">
+</p>
+
 # 🌦 Weather Forecast for Google Maps — Chrome Extension
 
 Click anywhere on Google Maps to see a **15-day ECMWF IFS weather forecast** 
