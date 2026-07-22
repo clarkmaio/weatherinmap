@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Weather Forecast for Google Maps",
+  "name": "weatherinmap",
   "version": "1.0.0",
   "description": "Click anywhere on Google Maps to see a 15-day ECMWF IFS forecast: temperature, precipitation, cloud cover, and wind.",
   "icons": {
