@@ -88,8 +88,9 @@
 /* ── Collapsed round icon (FAB) ── */
 #wmf-fab {
   position: fixed;
-  bottom: 24px;
+  top: 50%;
   right: 24px;
+  transform: translateY(-50%);
   width: 58px;
   height: 58px;
   border-radius: 50%;
@@ -110,12 +111,12 @@
 }
 
 #wmf-fab:hover {
-  transform: scale(1.08);
+  transform: translateY(-50%) scale(1.08);
   box-shadow: var(--wmf-fab-shadow);
   border-color: rgba(99, 179, 237, 0.5);
 }
 
-#wmf-fab:active { transform: scale(0.96); }
+#wmf-fab:active { transform: translateY(-50%) scale(0.96); }
 
 .wmf-fab-icon {
   width: 34px;
@@ -150,7 +151,7 @@
 /* Hidden while the panel is expanded */
 #wmf-fab.wmf-fab-hidden {
   opacity: 0;
-  transform: scale(0.4);
+  transform: translateY(-50%) scale(0.4);
   pointer-events: none;
 }
 

@@ -97,9 +97,12 @@
     fab.classList.remove('wmf-fab-ready');
   }
 
+  function isPanelOpen() {
+    return document.getElementById('wmf-panel').classList.contains('wmf-visible');
+  }
+
   function togglePanel() {
-    const panel = document.getElementById('wmf-panel');
-    if (panel.classList.contains('wmf-visible')) closePanel();
+    if (isPanelOpen()) closePanel();
     else openPanel();
   }
 
@@ -113,7 +116,9 @@
         <span class="wmf-loading-text">Fetching ECMWF IFS ENS data…</span>
       </div>`;
     destroyCharts();
-    openPanel();
+    // Only reveal the panel if the user already has it open. A click made
+    // while collapsed loads in the background (see renderPanel) and just
+    // lights up the icon's "ready" dot instead of popping the window open.
   }
 
   // Collapse the panel back into the round icon. Flag the icon as
@@ -340,6 +345,12 @@
     buildToggles();
     buildDayTabs();
     rebuildCharts();
+
+    // If the user loaded this from a collapsed state, keep it collapsed and
+    // just flag the icon so they know a fresh forecast is waiting inside.
+    if (!isPanelOpen()) {
+      document.getElementById('wmf-fab').classList.add('wmf-fab-ready');
+    }
   }
 
   // ─────────────────────────────────────────────
