@@ -88,9 +88,10 @@
 /* ── Collapsed round icon (FAB) ── */
 #wmf-fab {
   position: fixed;
-  top: 50%;
-  right: 24px;
-  transform: translateY(-50%);
+  /* Bottom-right edge, raised to clear the Google Maps zoom /
+     Street View controls that live in the corner. */
+  bottom: 232px;
+  right: 10px;
   width: 58px;
   height: 58px;
   border-radius: 50%;
@@ -111,12 +112,12 @@
 }
 
 #wmf-fab:hover {
-  transform: translateY(-50%) scale(1.08);
+  transform: scale(1.08);
   box-shadow: var(--wmf-fab-shadow);
   border-color: rgba(99, 179, 237, 0.5);
 }
 
-#wmf-fab:active { transform: translateY(-50%) scale(0.96); }
+#wmf-fab:active { transform: scale(0.96); }
 
 .wmf-fab-icon {
   width: 34px;
@@ -151,7 +152,7 @@
 /* Hidden while the panel is expanded */
 #wmf-fab.wmf-fab-hidden {
   opacity: 0;
-  transform: translateY(-50%) scale(0.4);
+  transform: scale(0.4);
   pointer-events: none;
 }
 
